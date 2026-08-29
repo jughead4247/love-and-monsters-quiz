@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Resident Evil Movie Quiz – How Well Do You Know the Movies?</title>
+
+    <meta name="description" content="Think you know the Resident Evil movies? Test your knowledge of Alice, Umbrella, the T-virus, characters, facilities and events with this 25-question Resident Evil movie quiz.">
+    <meta name="keywords" content="Resident Evil movie quiz, Resident Evil trivia, Resident Evil quiz, Alice quiz, Resident Evil movie trivia">
+    <meta name="author" content="Apocalypse Quizzes">
+    <meta name="robots" content="index, follow">
+
+    <link rel="canonical" href="https://apocalypsequizzes.com/resident-evil-quiz/">
+
+    <meta property="og:title" content="Resident Evil Movie Quiz – How Well Do You Know the Movies?">
+    <meta property="og:description" content="Test your knowledge of the Resident Evil movies with 25 questions covering Alice, Umbrella, the T-virus, characters and major events.">
+    <meta property="og:url" content="https://apocalypsequizzes.com/resident-evil-quiz/">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Apocalypse Quizzes">
+
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Resident Evil Movie Quiz">
+    <meta name="twitter:description" content="How well do you know the Resident Evil movies? Take the 25-question trivia challenge.">
+
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🧟</text></svg>">
+
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-YC3ERJSBST"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-YC3ERJSBST');
+    </script>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<main class="container">
+
+    <!-- START SCREEN -->
+    <section id="start-screen">
+
+        <div class="intro-card">
+
+            <img
+                src="resident-evil-knowledge.png"
+                alt="Resident Evil Movie Quiz"
+                class="quiz-start-image"
+            >
+
+            <div class="intro-icon">
+                🧟
+            </div>
+
+            <h1>HOW WELL DO YOU KNOW THE RESIDENT EVIL MOVIES?</h1>
+
+            <p class="subtitle">
+                Think you know Alice, Umbrella, the T-virus and the
+                creatures that came from it? Test your knowledge and
+                see how much of the Resident Evil film series you really remember.
+            </p>
+
+            <div class="info">
+                <span>25 Questions</span>
+                <span>•</span>
+                <span>4 Possible Choices</span>
+            </div>
+
+            <button id="start-btn">START QUIZ</button>
+
+        </div>
+
+    </section>
+
+
+    <!-- QUIZ SCREEN -->
+    <section id="quiz-screen" class="screen hidden">
+
+        <div class="quiz-header">
+            <span id="question-number">Question 1 of 25</span>
+            <span id="score-display">Resident Evil Trivia</span>
+        </div>
+
+        <div class="progress">
+            <div id="progress-bar"></div>
+        </div>
+
+        <h2 id="question"></h2>
+
+        <div id="answers"></div>
+
+    </section>
+
+
+    <!-- RESULT SCREEN -->
+    <section id="result-screen" class="screen hidden">
+
+        <div id="result-icon" class="icon">🧟</div>
+
+        <p class="result-label">YOUR RESULT</p>
+
+        <h1 id="result-title"></h1>
+
+        <div class="result-score">
+            <span id="final-score"></span>/50
+        </div>
+
+        <p id="result-description"></p>
+
+        <div class="survival-box">
+            <strong>Resident Evil Knowledge</strong>
+            <span id="knowledge-level"></span>
+        </div>
+
+        <button id="restart-btn">TRY AGAIN</button>
+        <button id="share-btn">📤 SHARE MY RESULT</button>
+        <button id="challenge-btn">🧟 CHALLENGE YOUR FRIENDS</button>
+
+    </section>
+
+
+    <!-- HOMEPAGE INFORMATION -->
+    <div id="home-info">
+
+        <section class="home-info">
+
+            <h2>About The Resident Evil Movie Quiz</h2>
+
+            <p>
+                Think you know everything about the Resident Evil movies?
+                Put your knowledge to the test with this 25-question
+                trivia quiz.
+            </p>
+
+            <p>
+                The questions cover Alice, Umbrella Corporation, the
+                T-virus, characters, facilities, artificial intelligence,
+                creatures and major events from the original live-action
+                Resident Evil film series.
+            </p>
+
+            <p>
+                Each correct answer gives you 2 points, giving you a
+                maximum possible score of 50.
+            </p>
+
+        </section>
+
+
+        <section class="home-info">
+
+            <h2>Frequently Asked Questions</h2>
+
+            <h3>How does the Resident Evil movie quiz work?</h3>
+
+            <p>
+                You will face 25 questions about the Resident Evil
+                movie series. Each question has four possible answers,
+                but only one answer is correct.
+            </p>
+
+            <h3>What is the maximum score?</h3>
+
+            <p>
+                The maximum score is 50 points. Every correct answer
+                is worth 2 points.
+            </p>
+
+            <h3>What does my score mean?</h3>
+
+            <p>
+                Your score represents how well you remember the
+                characters, events, creatures, locations and details
+                from the Resident Evil movies.
+            </p>
+
+            <h3>Can I take the quiz again?</h3>
+
+            <p>
+                Yes. Select TRY AGAIN after finishing the quiz to
+                replay it.
+            </p>
+
+            <h3>Can I challenge my friends?</h3>
+
+            <p>
+                Yes. Use the Challenge Your Friends button after
+                completing the quiz and see if they can beat your score.
+            </p>
+
+        </section>
+
+    </div>
+
+</main>
+
+
+<footer class="site-footer">
+
+    <div class="footer-links">
+
+        <a href="/">Home</a>
+        <a href="/about.html">About</a>
+        <a href="/privacy.html">Privacy Policy</a>
+        <a href="/contact.html">Contact</a>
+        <a href="/disclaimer.html">Disclaimer</a>
+
+    </div>
+
+    <div class="copyright">
+        © 2026 Apocalypse Quizzes
+    </div>
+
+</footer>
+
+
+<script src="script.js"></script>
+
+</body>
+</html>
