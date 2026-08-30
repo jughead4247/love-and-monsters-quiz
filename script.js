@@ -302,23 +302,13 @@ const questions = [
 
 ];
 
-const homeInfo = document.getElementById("home-info");
-
-const questions = [
-    // KEEP YOUR EXISTING 30 QUESTIONS HERE EXACTLY AS THEY ARE
-];
-
 let currentQuestion = 0;
 let selectedAnswers = new Array(questions.length).fill(null);
-
-
-// ===============================
-// ELEMENTS
-// ===============================
 
 const startScreen = document.getElementById("start-screen");
 const quizScreen = document.getElementById("quiz-screen");
 const resultScreen = document.getElementById("result-screen");
+const homeInfo = document.getElementById("home-info");
 
 const startButton = document.getElementById("start-btn");
 const restartButton = document.getElementById("restart-btn");
@@ -334,11 +324,6 @@ const questionText = document.getElementById("question");
 const answersContainer = document.getElementById("answers");
 const progressBar = document.getElementById("progress-bar");
 
-
-// ===============================
-// BUTTON EVENTS
-// ===============================
-
 startButton.addEventListener("click", startQuiz);
 restartButton.addEventListener("click", restartQuiz);
 shareButton.addEventListener("click", shareResult);
@@ -348,222 +333,119 @@ backButton.addEventListener("click", goBack);
 nextButton.addEventListener("click", goNext);
 submitButton.addEventListener("click", showResult);
 
-
-// ===============================
-// START QUIZ
-// ===============================
-
 function startQuiz() {
-
     currentQuestion = 0;
-
-    selectedAnswers =
-        new Array(questions.length).fill(null);
+    selectedAnswers = new Array(questions.length).fill(null);
 
     startScreen.classList.add("hidden");
     resultScreen.classList.add("hidden");
     quizScreen.classList.remove("hidden");
-
     homeInfo.classList.add("hidden");
 
     showQuestion();
 }
 
-
-// ===============================
-// SHOW QUESTION
-// ===============================
-
 function showQuestion() {
 
-    const current =
-        questions[currentQuestion];
+    const current = questions[currentQuestion];
 
     questionNumber.textContent =
         `Question ${currentQuestion + 1} of ${questions.length}`;
 
-    questionText.textContent =
-        current.question;
+    questionText.textContent = current.question;
 
     answersContainer.innerHTML = "";
-
-
-    // Progress
 
     const progress =
         ((currentQuestion + 1) / questions.length) * 100;
 
-    progressBar.style.width =
-        `${progress}%`;
-
-
-    // Answers
+    progressBar.style.width = `${progress}%`;
 
     current.answers.forEach((answer, index) => {
 
-        const button =
-            document.createElement("button");
+        const button = document.createElement("button");
 
         button.className = "answer";
-
         button.type = "button";
-
-        button.textContent =
-            answer[0];
-
+        button.textContent = answer[0];
 
         // Restore previous answer
-
-        if (
-            selectedAnswers[currentQuestion] === index
-        ) {
-
+        if (selectedAnswers[currentQuestion] === index) {
             button.classList.add("selected");
-
         }
 
-
-        button.addEventListener(
-            "click",
-            () => selectAnswer(index)
-        );
-
+        button.addEventListener("click", () => {
+            selectAnswer(index);
+        });
 
         answersContainer.appendChild(button);
-
     });
-
 
     updateNavigation();
 }
 
-
-// ===============================
-// SELECT ANSWER
-// ===============================
-
 function selectAnswer(answerIndex) {
 
-    selectedAnswers[currentQuestion] =
-        answerIndex;
-
-
-    // Immediately highlight selected answer
+    selectedAnswers[currentQuestion] = answerIndex;
 
     const buttons =
         answersContainer.querySelectorAll(".answer");
 
     buttons.forEach((button, index) => {
-
         button.classList.toggle(
             "selected",
             index === answerIndex
         );
-
     });
-
 
     updateNavigation();
 
-
-    // Automatic advancement
-
-    const questionAtSelection =
-        currentQuestion;
-
+    const questionAtSelection = currentQuestion;
 
     setTimeout(() => {
 
-        // Only advance if user is still
-        // on the same question
-
         if (
             currentQuestion === questionAtSelection &&
-            selectedAnswers[questionAtSelection] === answerIndex
+            selectedAnswers[questionAtSelection] === answerIndex &&
+            currentQuestion < questions.length - 1
         ) {
-
-            if (
-                currentQuestion <
-                questions.length - 1
-            ) {
-
-                currentQuestion++;
-
-                showQuestion();
-
-            }
-
+            currentQuestion++;
+            showQuestion();
         }
 
     }, 180);
 }
 
-
-// ===============================
-// NEXT
-// ===============================
-
 function goNext() {
 
-    // Do nothing if current question
-    // has not been answered
-
-    if (
-        selectedAnswers[currentQuestion] === null
-    ) {
-
+    if (selectedAnswers[currentQuestion] === null) {
         return;
-
     }
 
-
-    // Final question
-
-    if (
-        currentQuestion ===
-        questions.length - 1
-    ) {
+    if (currentQuestion === questions.length - 1) {
 
         if (
             selectedAnswers.every(
                 answer => answer !== null
             )
         ) {
-
             showResult();
-
         }
 
         return;
-
     }
 
-
     currentQuestion++;
-
     showQuestion();
 }
-
-
-// ===============================
-// BACK
-// ===============================
 
 function goBack() {
 
     if (currentQuestion > 0) {
-
         currentQuestion--;
-
         showQuestion();
-
     }
 }
-
-
-// ===============================
-// NAVIGATION
-// ===============================
 
 function updateNavigation() {
 
@@ -571,8 +453,7 @@ function updateNavigation() {
         currentQuestion === 0;
 
     const isLast =
-        currentQuestion ===
-        questions.length - 1;
+        currentQuestion === questions.length - 1;
 
     const currentAnswered =
         selectedAnswers[currentQuestion] !== null;
@@ -582,270 +463,145 @@ function updateNavigation() {
             answer => answer !== null
         );
 
-
-    // BACK
-
-    backButton.disabled =
-        isFirst;
-
-
-    // NEXT / SUBMIT
+    backButton.disabled = isFirst;
 
     if (isLast) {
 
         nextButton.classList.add("hidden");
-
         submitButton.classList.remove("hidden");
 
+        submitButton.disabled = !allAnswered;
 
-        if (allAnswered) {
-
-            submitButton.disabled = false;
-
-            submitButton.textContent =
-                "SUBMIT";
-
-        } else {
-
-            submitButton.disabled = true;
-
-            submitButton.textContent =
-                "Answer All Questions";
-
-        }
+        submitButton.textContent =
+            allAnswered
+                ? "SUBMIT"
+                : "Answer All Questions";
 
     } else {
 
         submitButton.classList.add("hidden");
-
         nextButton.classList.remove("hidden");
 
-        nextButton.textContent =
-            "Next →";
-
-        nextButton.disabled =
-            !currentAnswered;
-
+        nextButton.textContent = "Next →";
+        nextButton.disabled = !currentAnswered;
     }
 }
-
-
-// ===============================
-// CALCULATE SCORE
-// ===============================
 
 function calculateScore() {
 
     let score = 0;
 
-
     selectedAnswers.forEach(
         (answerIndex, questionIndex) => {
 
-            if (answerIndex === null) {
+            if (answerIndex !== null) {
 
-                return;
-
+                score +=
+                    questions[questionIndex]
+                        .answers[answerIndex][1];
             }
-
-
-            score +=
-                questions[questionIndex]
-                    .answers[answerIndex][1];
-
         }
     );
-
 
     return score;
 }
 
-
-// ===============================
-// RESULT
-// ===============================
-
 function showResult() {
 
-    const score =
-        calculateScore();
-
+    const score = calculateScore();
 
     homeInfo.classList.remove("hidden");
-
     quizScreen.classList.add("hidden");
-
     resultScreen.classList.remove("hidden");
 
-
-    document.getElementById(
-        "final-score"
-    ).textContent = score;
-
+    document.getElementById("final-score").textContent = score;
 
     let title;
     let description;
     let knowledge;
     let icon;
 
-
     if (score <= 6) {
 
-        title =
-            "🐸 Monster Bait";
-
+        title = "🐸 Monster Bait";
         description =
             "The monsters may know more about Love and Monsters than you do! Time for another watch.";
-
-        knowledge =
-            "Casual Viewer";
-
-        icon =
-            "🐸";
+        knowledge = "Casual Viewer";
+        icon = "🐸";
 
     } else if (score <= 12) {
 
-        title =
-            "🏚️ Bunker Survivor";
-
+        title = "🏚️ Bunker Survivor";
         description =
             "You remember some of the movie, but quite a few details were lost somewhere along the journey.";
-
-        knowledge =
-            "Casual Fan";
-
-        icon =
-            "🏚️";
+        knowledge = "Casual Fan";
+        icon = "🏚️";
 
     } else if (score <= 18) {
 
-        title =
-            "🎒 Monster Survivor";
-
+        title = "🎒 Monster Survivor";
         description =
             "Not bad! You remember the major characters, monsters and events, but some details escaped you.";
-
-        knowledge =
-            "Good Fan";
-
-        icon =
-            "🎒";
+        knowledge = "Good Fan";
+        icon = "🎒";
 
     } else if (score <= 24) {
 
-        title =
-            "🏹 Seasoned Survivor";
-
+        title = "🏹 Seasoned Survivor";
         description =
             "Impressive! You know your monsters, colonies and characters pretty well.";
-
-        knowledge =
-            "Dedicated Fan";
-
-        icon =
-            "🏹";
+        knowledge = "Dedicated Fan";
+        icon = "🏹";
 
     } else if (score <= 29) {
 
-        title =
-            "🐕 Monster Expert";
-
+        title = "🐕 Monster Expert";
         description =
             "Excellent! You remember most of the details that make Love and Monsters memorable.";
-
-        knowledge =
-            "Expert Fan";
-
-        icon =
-            "🐕";
+        knowledge = "Expert Fan";
+        icon = "🐕";
 
     } else {
 
-        title =
-            "🧠 Love and Monsters Encyclopedia";
-
+        title = "🧠 Love and Monsters Encyclopedia";
         description =
             "Perfect score! You remember practically every detail of Joel’s journey through the monster apocalypse.";
-
-        knowledge =
-            "Ultimate Fan";
-
-        icon =
-            "🧠";
-
+        knowledge = "Ultimate Fan";
+        icon = "🧠";
     }
 
+    document.getElementById("result-title").textContent = title;
+    document.getElementById("result-description").textContent = description;
+    document.getElementById("knowledge-level").textContent = knowledge;
+    document.getElementById("result-icon").textContent = icon;
 
-    document.getElementById(
-        "result-title"
-    ).textContent = title;
-
-    document.getElementById(
-        "result-description"
-    ).textContent = description;
-
-    document.getElementById(
-        "knowledge-level"
-    ).textContent = knowledge;
-
-    document.getElementById(
-        "result-icon"
-    ).textContent = icon;
-
-
-    progressBar.style.width =
-        "100%";
-
+    progressBar.style.width = "100%";
 }
-
-
-// ===============================
-// RESTART
-// ===============================
 
 function restartQuiz() {
 
     currentQuestion = 0;
-
     selectedAnswers =
         new Array(questions.length).fill(null);
 
-
     resultScreen.classList.add("hidden");
-
     quizScreen.classList.add("hidden");
-
     startScreen.classList.remove("hidden");
-
     homeInfo.classList.remove("hidden");
 
-
-    progressBar.style.width =
-        "0%";
+    progressBar.style.width = "0%";
 }
-
-
-// ===============================
-// SHARE
-// ===============================
 
 async function shareResult() {
 
     const title =
-        document.getElementById(
-            "result-title"
-        ).textContent;
+        document.getElementById("result-title").textContent;
 
     const knowledge =
-        document.getElementById(
-            "knowledge-level"
-        ).textContent;
+        document.getElementById("knowledge-level").textContent;
 
     const finalScore =
-        document.getElementById(
-            "final-score"
-        ).textContent;
-
+        document.getElementById("final-score").textContent;
 
     const shareText =
         `🐸 I scored ${finalScore}/30 on the Love and Monsters Quiz!\n\n` +
@@ -853,28 +609,17 @@ async function shareResult() {
         `Knowledge level: ${knowledge}\n\n` +
         `How well do YOU know Love and Monsters?`;
 
-
     const shareData = {
-
-        title:
-            "Love and Monsters Quiz",
-
-        text:
-            shareText,
-
-        url:
-            "https://apocalypsequizzes.com/love-and-monsters-quiz/"
-
+        title: "Love and Monsters Quiz",
+        text: shareText,
+        url: "https://apocalypsequizzes.com/love-and-monsters-quiz/"
     };
-
 
     try {
 
         if (navigator.share) {
 
-            await navigator.share(
-                shareData
-            );
+            await navigator.share(shareData);
 
         } else {
 
@@ -886,15 +631,9 @@ async function shareResult() {
             alert(
                 "Your result has been copied! You can paste it anywhere."
             );
-
         }
 
     } catch (error) {
-
-        console.log(
-            "Sharing cancelled."
-        );
-
+        console.log("Sharing cancelled.");
     }
-
 }
