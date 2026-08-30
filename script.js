@@ -305,9 +305,19 @@ const questions = [
 ];
 
 
-let currentQuestion = 0;
-let score = 0;
+const homeInfo = document.getElementById("home-info");
 
+const questions = [
+    // KEEP YOUR EXISTING QUESTIONS ARRAY HERE
+];
+
+let currentQuestion = 0;
+let selectedAnswers = new Array(questions.length).fill(null);
+
+
+// ===============================
+// ELEMENTS
+// ===============================
 
 const startScreen = document.getElementById("start-screen");
 const quizScreen = document.getElementById("quiz-screen");
@@ -318,32 +328,54 @@ const restartButton = document.getElementById("restart-btn");
 const shareButton = document.getElementById("share-btn");
 const challengeButton = document.getElementById("challenge-btn");
 
+const backButton = document.getElementById("back-btn");
+const nextButton = document.getElementById("next-btn");
+const submitButton = document.getElementById("submit-btn");
+
 const questionNumber = document.getElementById("question-number");
 const questionText = document.getElementById("question");
 const answersContainer = document.getElementById("answers");
 const progressBar = document.getElementById("progress-bar");
 
 
+// ===============================
+// EVENTS
+// ===============================
+
 startButton.addEventListener("click", startQuiz);
 restartButton.addEventListener("click", restartQuiz);
 shareButton.addEventListener("click", shareResult);
 challengeButton.addEventListener("click", shareResult);
 
+backButton.addEventListener("click", goBack);
+nextButton.addEventListener("click", goNext);
+submitButton.addEventListener("click", submitQuiz);
+
+
+// ===============================
+// START
+// ===============================
 
 function startQuiz() {
 
-    homeInfo.classList.add("hidden");
-
     currentQuestion = 0;
-    score = 0;
+
+    selectedAnswers =
+        new Array(questions.length).fill(null);
 
     startScreen.classList.add("hidden");
     resultScreen.classList.add("hidden");
     quizScreen.classList.remove("hidden");
 
+    homeInfo.classList.add("hidden");
+
     showQuestion();
 }
 
+
+// ===============================
+// SHOW QUESTION
+// ===============================
 
 function showQuestion() {
 
@@ -352,53 +384,315 @@ function showQuestion() {
     questionNumber.textContent =
         `Question ${currentQuestion + 1} of ${questions.length}`;
 
-    questionText.textContent = current.question;
+    questionText.textContent =
+        current.question;
 
     answersContainer.innerHTML = "";
+
 
     const progress =
         ((currentQuestion + 1) / questions.length) * 100;
 
-    progressBar.style.width = `${progress}%`;
+    progressBar.style.width =
+        `${progress}%`;
 
 
-    current.answers.forEach((answer) => {
+    current.answers.forEach((answer, index) => {
 
-        const button = document.createElement("button");
+        const button =
+            document.createElement("button");
 
         button.className = "answer";
 
+        button.type = "button";
+
         button.textContent = answer[0];
 
+
+        // Restore previous answer
+        if (
+            selectedAnswers[currentQuestion] === index
+        ) {
+
+            button.classList.add("selected");
+
+        }
+
+
         button.addEventListener("click", () => {
-            selectAnswer(answer[1]);
+
+            selectAnswer(index);
+
         });
+
 
         answersContainer.appendChild(button);
 
     });
+
+
+    updateNavigation();
 }
 
 
-function selectAnswer(points) {
+// ===============================
+// SELECT ANSWER
+// ===============================
 
-    score += points;
+function selectAnswer(answerIndex) {
 
-    currentQuestion++;
+    selectedAnswers[currentQuestion] =
+        answerIndex;
 
-    if (currentQuestion < questions.length) {
 
-        showQuestion();
+    const buttons =
+        answersContainer.querySelectorAll(".answer");
 
-    } else {
 
-        showResult();
+    buttons.forEach((button, index) => {
+
+        button.classList.toggle(
+            "selected",
+            index === answerIndex
+        );
+
+    });
+
+
+    updateNavigation();
+
+
+    // Automatically move forward
+    if (
+        currentQuestion <
+        questions.length - 1
+    ) {
+
+        const questionAtSelection =
+            currentQuestion;
+
+
+        setTimeout(() => {
+
+            if (
+                currentQuestion ===
+                    questionAtSelection &&
+
+                selectedAnswers[
+                    questionAtSelection
+                ] === answerIndex
+            ) {
+
+                currentQuestion++;
+
+                showQuestion();
+
+            }
+
+        }, 150);
 
     }
 }
 
 
+// ===============================
+// NEXT
+// ===============================
+
+function goNext() {
+
+    if (
+        selectedAnswers[currentQuestion] === null
+    ) {
+
+        return;
+
+    }
+
+
+    if (
+        currentQuestion ===
+        questions.length - 1
+    ) {
+
+        if (
+            selectedAnswers.every(
+                answer => answer !== null
+            )
+        ) {
+
+            submitQuiz();
+
+        }
+
+        return;
+    }
+
+
+    currentQuestion++;
+
+    showQuestion();
+}
+
+
+// ===============================
+// BACK
+// ===============================
+
+function goBack() {
+
+    if (currentQuestion > 0) {
+
+        currentQuestion--;
+
+        showQuestion();
+
+    }
+}
+
+
+// ===============================
+// SUBMIT
+// ===============================
+
+function submitQuiz() {
+
+    const allAnswered =
+        selectedAnswers.every(
+            answer => answer !== null
+        );
+
+
+    if (!allAnswered) {
+
+        return;
+
+    }
+
+
+    showResult();
+}
+
+
+// ===============================
+// NAVIGATION
+// ===============================
+
+function updateNavigation() {
+
+    const isFirst =
+        currentQuestion === 0;
+
+    const isLast =
+        currentQuestion ===
+        questions.length - 1;
+
+    const currentAnswered =
+        selectedAnswers[currentQuestion] !== null;
+
+    const allAnswered =
+        selectedAnswers.every(
+            answer => answer !== null
+        );
+
+
+    backButton.disabled =
+        isFirst;
+
+
+    if (isLast) {
+
+        nextButton.classList.add("hidden");
+
+        submitButton.classList.remove("hidden");
+
+
+        if (allAnswered) {
+
+            submitButton.disabled = false;
+
+            submitButton.textContent =
+                "SUBMIT";
+
+            submitButton.classList.add(
+                "submit-ready"
+            );
+
+        } else {
+
+            submitButton.disabled = true;
+
+            submitButton.textContent =
+                "Answer All Questions";
+
+            submitButton.classList.remove(
+                "submit-ready"
+            );
+
+        }
+
+    } else {
+
+        nextButton.classList.remove("hidden");
+
+        submitButton.classList.add("hidden");
+
+        nextButton.textContent =
+            "Next →";
+
+        nextButton.disabled =
+            !currentAnswered;
+
+        nextButton.classList.remove(
+            "submit-ready"
+        );
+
+    }
+}
+
+
+// ===============================
+// SCORE
+// ===============================
+
+function calculateScore() {
+
+    let score = 0;
+
+
+    selectedAnswers.forEach(
+        (answerIndex, questionIndex) => {
+
+            if (answerIndex === null) {
+
+                return;
+
+            }
+
+
+            score +=
+                questions[
+                    questionIndex
+                ].answers[
+                    answerIndex
+                ][1];
+
+        }
+    );
+
+
+    return score;
+}
+
+
+// ===============================
+// RESULT
+// ===============================
+
 function showResult() {
+
+    const score =
+        calculateScore();
 
     homeInfo.classList.remove("hidden");
 
@@ -406,7 +700,9 @@ function showResult() {
 
     resultScreen.classList.remove("hidden");
 
-    document.getElementById("final-score").textContent = score;
+    document.getElementById(
+        "final-score"
+    ).textContent = score;
 
 
     let title;
@@ -483,42 +779,69 @@ function showResult() {
     }
 
 
-    document.getElementById("result-title").textContent = title;
+    document.getElementById(
+        "result-title"
+    ).textContent = title;
 
-    document.getElementById("result-description").textContent =
-        description;
+    document.getElementById(
+        "result-description"
+    ).textContent = description;
 
-    document.getElementById("knowledge-level").textContent =
-        knowledge;
+    document.getElementById(
+        "knowledge-level"
+    ).textContent = knowledge;
 
-    document.getElementById("result-icon").textContent =
-        icon;
+    document.getElementById(
+        "result-icon"
+    ).textContent = icon;
 
     progressBar.style.width = "100%";
 }
 
 
+// ===============================
+// RESTART
+// ===============================
+
 function restartQuiz() {
 
+    currentQuestion = 0;
+
+    selectedAnswers =
+        new Array(questions.length).fill(null);
+
     resultScreen.classList.add("hidden");
+
+    quizScreen.classList.add("hidden");
 
     startScreen.classList.remove("hidden");
 
     homeInfo.classList.remove("hidden");
 
+    progressBar.style.width = "0%";
 }
 
+
+// ===============================
+// SHARE
+// ===============================
 
 async function shareResult() {
 
     const title =
-        document.getElementById("result-title").textContent;
+        document.getElementById(
+            "result-title"
+        ).textContent;
 
     const knowledge =
-        document.getElementById("knowledge-level").textContent;
+        document.getElementById(
+            "knowledge-level"
+        ).textContent;
 
     const finalScore =
-        document.getElementById("final-score").textContent;
+        document.getElementById(
+            "final-score"
+        ).textContent;
 
 
     const shareText =
@@ -530,11 +853,14 @@ async function shareResult() {
 
     const shareData = {
 
-        title: "Love and Monsters Quiz",
+        title:
+            "Love and Monsters Quiz",
 
-        text: shareText,
+        text:
+            shareText,
 
-        url: "https://apocalypsequizzes.com/love-and-monsters-quiz/"
+        url:
+            "https://apocalypsequizzes.com/love-and-monsters-quiz/"
 
     };
 
@@ -543,7 +869,9 @@ async function shareResult() {
 
         if (navigator.share) {
 
-            await navigator.share(shareData);
+            await navigator.share(
+                shareData
+            );
 
         } else {
 
@@ -560,8 +888,9 @@ async function shareResult() {
 
     } catch (error) {
 
-        console.log("Sharing cancelled.");
+        console.log(
+            "Sharing cancelled."
+        );
 
     }
-
 }
