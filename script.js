@@ -1,5 +1,3 @@
-const homeInfo = document.getElementById("home-info");
-
 const questions = [
 
     {
