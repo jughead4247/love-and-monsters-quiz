@@ -303,12 +303,6 @@ const questions = [
 ];
 
 
-const homeInfo = document.getElementById("home-info");
-
-const questions = [
-    // KEEP YOUR EXISTING QUESTIONS ARRAY HERE
-];
-
 let currentQuestion = 0;
 let selectedAnswers = new Array(questions.length).fill(null);
 
@@ -337,7 +331,7 @@ const progressBar = document.getElementById("progress-bar");
 
 
 // ===============================
-// EVENTS
+// BUTTON EVENTS
 // ===============================
 
 startButton.addEventListener("click", startQuiz);
@@ -351,7 +345,7 @@ submitButton.addEventListener("click", submitQuiz);
 
 
 // ===============================
-// START
+// START QUIZ
 // ===============================
 
 function startQuiz() {
@@ -404,7 +398,8 @@ function showQuestion() {
 
         button.type = "button";
 
-        button.textContent = answer[0];
+        button.textContent =
+            answer[0];
 
 
         // Restore previous answer
@@ -460,7 +455,7 @@ function selectAnswer(answerIndex) {
     updateNavigation();
 
 
-    // Automatically move forward
+    // Automatic advancement
     if (
         currentQuestion <
         questions.length - 1
@@ -494,11 +489,12 @@ function selectAnswer(answerIndex) {
 
 
 // ===============================
-// NEXT
+// NEXT BUTTON
 // ===============================
 
 function goNext() {
 
+    // Don't move forward if unanswered
     if (
         selectedAnswers[currentQuestion] === null
     ) {
@@ -508,22 +504,16 @@ function goNext() {
     }
 
 
+    // Final question
     if (
         currentQuestion ===
         questions.length - 1
     ) {
 
-        if (
-            selectedAnswers.every(
-                answer => answer !== null
-            )
-        ) {
-
-            submitQuiz();
-
-        }
+        submitQuiz();
 
         return;
+
     }
 
 
@@ -534,7 +524,7 @@ function goNext() {
 
 
 // ===============================
-// BACK
+// BACK BUTTON
 // ===============================
 
 function goBack() {
@@ -550,7 +540,7 @@ function goBack() {
 
 
 // ===============================
-// SUBMIT
+// SUBMIT BUTTON
 // ===============================
 
 function submitQuiz() {
@@ -594,10 +584,12 @@ function updateNavigation() {
         );
 
 
+    // Back
     backButton.disabled =
         isFirst;
 
 
+    // Final question
     if (isLast) {
 
         nextButton.classList.add("hidden");
@@ -650,7 +642,7 @@ function updateNavigation() {
 
 
 // ===============================
-// SCORE
+// CALCULATE SCORE
 // ===============================
 
 function calculateScore() {
@@ -692,11 +684,13 @@ function showResult() {
     const score =
         calculateScore();
 
+
     homeInfo.classList.remove("hidden");
 
     quizScreen.classList.add("hidden");
 
     resultScreen.classList.remove("hidden");
+
 
     document.getElementById(
         "final-score"
@@ -774,6 +768,7 @@ function showResult() {
         knowledge = "Ultimate Fan";
 
         icon = "🧠";
+
     }
 
 
@@ -781,19 +776,24 @@ function showResult() {
         "result-title"
     ).textContent = title;
 
+
     document.getElementById(
         "result-description"
     ).textContent = description;
+
 
     document.getElementById(
         "knowledge-level"
     ).textContent = knowledge;
 
+
     document.getElementById(
         "result-icon"
     ).textContent = icon;
 
-    progressBar.style.width = "100%";
+
+    progressBar.style.width =
+        "100%";
 }
 
 
@@ -808,6 +808,7 @@ function restartQuiz() {
     selectedAnswers =
         new Array(questions.length).fill(null);
 
+
     resultScreen.classList.add("hidden");
 
     quizScreen.classList.add("hidden");
@@ -816,7 +817,8 @@ function restartQuiz() {
 
     homeInfo.classList.remove("hidden");
 
-    progressBar.style.width = "0%";
+    progressBar.style.width =
+        "0%";
 }
 
 
