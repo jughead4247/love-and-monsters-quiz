@@ -302,6 +302,11 @@ const questions = [
 
 ];
 
+const homeInfo = document.getElementById("home-info");
+
+const questions = [
+    // KEEP YOUR EXISTING 30 QUESTIONS HERE EXACTLY AS THEY ARE
+];
 
 let currentQuestion = 0;
 let selectedAnswers = new Array(questions.length).fill(null);
@@ -341,7 +346,7 @@ challengeButton.addEventListener("click", shareResult);
 
 backButton.addEventListener("click", goBack);
 nextButton.addEventListener("click", goNext);
-submitButton.addEventListener("click", submitQuiz);
+submitButton.addEventListener("click", showResult);
 
 
 // ===============================
@@ -371,7 +376,8 @@ function startQuiz() {
 
 function showQuestion() {
 
-    const current = questions[currentQuestion];
+    const current =
+        questions[currentQuestion];
 
     questionNumber.textContent =
         `Question ${currentQuestion + 1} of ${questions.length}`;
@@ -382,12 +388,16 @@ function showQuestion() {
     answersContainer.innerHTML = "";
 
 
+    // Progress
+
     const progress =
         ((currentQuestion + 1) / questions.length) * 100;
 
     progressBar.style.width =
         `${progress}%`;
 
+
+    // Answers
 
     current.answers.forEach((answer, index) => {
 
@@ -403,6 +413,7 @@ function showQuestion() {
 
 
         // Restore previous answer
+
         if (
             selectedAnswers[currentQuestion] === index
         ) {
@@ -412,11 +423,10 @@ function showQuestion() {
         }
 
 
-        button.addEventListener("click", () => {
-
-            selectAnswer(index);
-
-        });
+        button.addEventListener(
+            "click",
+            () => selectAnswer(index)
+        );
 
 
         answersContainer.appendChild(button);
@@ -438,9 +448,10 @@ function selectAnswer(answerIndex) {
         answerIndex;
 
 
+    // Immediately highlight selected answer
+
     const buttons =
         answersContainer.querySelectorAll(".answer");
-
 
     buttons.forEach((button, index) => {
 
@@ -456,24 +467,24 @@ function selectAnswer(answerIndex) {
 
 
     // Automatic advancement
-    if (
-        currentQuestion <
-        questions.length - 1
-    ) {
 
-        const questionAtSelection =
-            currentQuestion;
+    const questionAtSelection =
+        currentQuestion;
 
 
-        setTimeout(() => {
+    setTimeout(() => {
+
+        // Only advance if user is still
+        // on the same question
+
+        if (
+            currentQuestion === questionAtSelection &&
+            selectedAnswers[questionAtSelection] === answerIndex
+        ) {
 
             if (
-                currentQuestion ===
-                    questionAtSelection &&
-
-                selectedAnswers[
-                    questionAtSelection
-                ] === answerIndex
+                currentQuestion <
+                questions.length - 1
             ) {
 
                 currentQuestion++;
@@ -482,19 +493,21 @@ function selectAnswer(answerIndex) {
 
             }
 
-        }, 150);
+        }
 
-    }
+    }, 180);
 }
 
 
 // ===============================
-// NEXT BUTTON
+// NEXT
 // ===============================
 
 function goNext() {
 
-    // Don't move forward if unanswered
+    // Do nothing if current question
+    // has not been answered
+
     if (
         selectedAnswers[currentQuestion] === null
     ) {
@@ -505,12 +518,21 @@ function goNext() {
 
 
     // Final question
+
     if (
         currentQuestion ===
         questions.length - 1
     ) {
 
-        submitQuiz();
+        if (
+            selectedAnswers.every(
+                answer => answer !== null
+            )
+        ) {
+
+            showResult();
+
+        }
 
         return;
 
@@ -524,7 +546,7 @@ function goNext() {
 
 
 // ===============================
-// BACK BUTTON
+// BACK
 // ===============================
 
 function goBack() {
@@ -536,29 +558,6 @@ function goBack() {
         showQuestion();
 
     }
-}
-
-
-// ===============================
-// SUBMIT BUTTON
-// ===============================
-
-function submitQuiz() {
-
-    const allAnswered =
-        selectedAnswers.every(
-            answer => answer !== null
-        );
-
-
-    if (!allAnswered) {
-
-        return;
-
-    }
-
-
-    showResult();
 }
 
 
@@ -584,12 +583,14 @@ function updateNavigation() {
         );
 
 
-    // Back
+    // BACK
+
     backButton.disabled =
         isFirst;
 
 
-    // Final question
+    // NEXT / SUBMIT
+
     if (isLast) {
 
         nextButton.classList.add("hidden");
@@ -604,10 +605,6 @@ function updateNavigation() {
             submitButton.textContent =
                 "SUBMIT";
 
-            submitButton.classList.add(
-                "submit-ready"
-            );
-
         } else {
 
             submitButton.disabled = true;
@@ -615,27 +612,19 @@ function updateNavigation() {
             submitButton.textContent =
                 "Answer All Questions";
 
-            submitButton.classList.remove(
-                "submit-ready"
-            );
-
         }
 
     } else {
 
-        nextButton.classList.remove("hidden");
-
         submitButton.classList.add("hidden");
+
+        nextButton.classList.remove("hidden");
 
         nextButton.textContent =
             "Next →";
 
         nextButton.disabled =
             !currentAnswered;
-
-        nextButton.classList.remove(
-            "submit-ready"
-        );
 
     }
 }
@@ -661,11 +650,8 @@ function calculateScore() {
 
 
             score +=
-                questions[
-                    questionIndex
-                ].answers[
-                    answerIndex
-                ][1];
+                questions[questionIndex]
+                    .answers[answerIndex][1];
 
         }
     );
@@ -705,69 +691,87 @@ function showResult() {
 
     if (score <= 6) {
 
-        title = "🐸 Monster Bait";
+        title =
+            "🐸 Monster Bait";
 
         description =
             "The monsters may know more about Love and Monsters than you do! Time for another watch.";
 
-        knowledge = "Casual Viewer";
+        knowledge =
+            "Casual Viewer";
 
-        icon = "🐸";
+        icon =
+            "🐸";
 
     } else if (score <= 12) {
 
-        title = "🏚️ Bunker Survivor";
+        title =
+            "🏚️ Bunker Survivor";
 
         description =
             "You remember some of the movie, but quite a few details were lost somewhere along the journey.";
 
-        knowledge = "Casual Fan";
+        knowledge =
+            "Casual Fan";
 
-        icon = "🏚️";
+        icon =
+            "🏚️";
 
     } else if (score <= 18) {
 
-        title = "🎒 Monster Survivor";
+        title =
+            "🎒 Monster Survivor";
 
         description =
             "Not bad! You remember the major characters, monsters and events, but some details escaped you.";
 
-        knowledge = "Good Fan";
+        knowledge =
+            "Good Fan";
 
-        icon = "🎒";
+        icon =
+            "🎒";
 
     } else if (score <= 24) {
 
-        title = "🏹 Seasoned Survivor";
+        title =
+            "🏹 Seasoned Survivor";
 
         description =
             "Impressive! You know your monsters, colonies and characters pretty well.";
 
-        knowledge = "Dedicated Fan";
+        knowledge =
+            "Dedicated Fan";
 
-        icon = "🏹";
+        icon =
+            "🏹";
 
     } else if (score <= 29) {
 
-        title = "🐕 Monster Expert";
+        title =
+            "🐕 Monster Expert";
 
         description =
             "Excellent! You remember most of the details that make Love and Monsters memorable.";
 
-        knowledge = "Expert Fan";
+        knowledge =
+            "Expert Fan";
 
-        icon = "🐕";
+        icon =
+            "🐕";
 
     } else {
 
-        title = "🧠 Love and Monsters Encyclopedia";
+        title =
+            "🧠 Love and Monsters Encyclopedia";
 
         description =
             "Perfect score! You remember practically every detail of Joel’s journey through the monster apocalypse.";
 
-        knowledge = "Ultimate Fan";
+        knowledge =
+            "Ultimate Fan";
 
-        icon = "🧠";
+        icon =
+            "🧠";
 
     }
 
@@ -776,16 +780,13 @@ function showResult() {
         "result-title"
     ).textContent = title;
 
-
     document.getElementById(
         "result-description"
     ).textContent = description;
 
-
     document.getElementById(
         "knowledge-level"
     ).textContent = knowledge;
-
 
     document.getElementById(
         "result-icon"
@@ -794,6 +795,7 @@ function showResult() {
 
     progressBar.style.width =
         "100%";
+
 }
 
 
@@ -816,6 +818,7 @@ function restartQuiz() {
     startScreen.classList.remove("hidden");
 
     homeInfo.classList.remove("hidden");
+
 
     progressBar.style.width =
         "0%";
@@ -893,4 +896,5 @@ async function shareResult() {
         );
 
     }
+
 }
