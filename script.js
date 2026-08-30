@@ -314,7 +314,6 @@ let selectedAnswers = new Array(questions.length).fill(null);
 const startScreen = document.getElementById("start-screen");
 const quizScreen = document.getElementById("quiz-screen");
 const resultScreen = document.getElementById("result-screen");
-const homeInfo = document.getElementById("home-info");
 
 const startButton = document.getElementById("start-btn");
 const restartButton = document.getElementById("restart-btn");
