@@ -150,7 +150,7 @@ const questions = [
         ]
     },
 
-{
+    {
         question: "How is the name of the robot written in Love and Monsters?",
         answers: [
             ["MAVI5", 0],
@@ -230,7 +230,7 @@ const questions = [
         ]
     },
 
-{
+    {
         question: "Which song does Mav1s play for Joel?",
         answers: [
             ["Stand by Me", 1],
@@ -302,150 +302,323 @@ const questions = [
 
 ];
 
+
 let currentQuestion = 0;
-let selectedAnswers = new Array(questions.length).fill(null);
 
-const startScreen = document.getElementById("start-screen");
-const quizScreen = document.getElementById("quiz-screen");
-const resultScreen = document.getElementById("result-screen");
-const homeInfo = document.getElementById("home-info");
+let selectedAnswers =
+    new Array(questions.length).fill(null);
 
-const startButton = document.getElementById("start-btn");
-const restartButton = document.getElementById("restart-btn");
-const shareButton = document.getElementById("share-btn");
-const challengeButton = document.getElementById("challenge-btn");
 
-const backButton = document.getElementById("back-btn");
-const nextButton = document.getElementById("next-btn");
-const submitButton = document.getElementById("submit-btn");
+// =========================================
+// ELEMENT REFERENCES
+// =========================================
 
-const questionNumber = document.getElementById("question-number");
-const questionText = document.getElementById("question");
-const answersContainer = document.getElementById("answers");
-const progressBar = document.getElementById("progress-bar");
+const startScreen =
+    document.getElementById("start-screen");
 
-startButton.addEventListener("click", startQuiz);
-restartButton.addEventListener("click", restartQuiz);
-shareButton.addEventListener("click", shareResult);
-challengeButton.addEventListener("click", shareResult);
+const quizScreen =
+    document.getElementById("quiz-screen");
 
-backButton.addEventListener("click", goBack);
-nextButton.addEventListener("click", goNext);
-submitButton.addEventListener("click", showResult);
+const resultScreen =
+    document.getElementById("result-screen");
+
+const homeInfo =
+    document.getElementById("home-info");
+
+const suggestionsCard =
+    document.getElementById("suggestions-card");
+
+
+const startButton =
+    document.getElementById("start-btn");
+
+const restartButton =
+    document.getElementById("restart-btn");
+
+const shareButton =
+    document.getElementById("share-btn");
+
+const challengeButton =
+    document.getElementById("challenge-btn");
+
+
+const backButton =
+    document.getElementById("back-btn");
+
+const nextButton =
+    document.getElementById("next-btn");
+
+const submitButton =
+    document.getElementById("submit-btn");
+
+
+const questionNumber =
+    document.getElementById("question-number");
+
+const questionText =
+    document.getElementById("question");
+
+const answersContainer =
+    document.getElementById("answers");
+
+const progressBar =
+    document.getElementById("progress-bar");
+
+
+// =========================================
+// EVENT LISTENERS
+// =========================================
+
+startButton.addEventListener(
+    "click",
+    startQuiz
+);
+
+restartButton.addEventListener(
+    "click",
+    restartQuiz
+);
+
+shareButton.addEventListener(
+    "click",
+    shareResult
+);
+
+challengeButton.addEventListener(
+    "click",
+    shareResult
+);
+
+backButton.addEventListener(
+    "click",
+    goBack
+);
+
+nextButton.addEventListener(
+    "click",
+    goNext
+);
+
+submitButton.addEventListener(
+    "click",
+    showResult
+);
+
+
+// =========================================
+// START QUIZ
+// =========================================
 
 function startQuiz() {
+
     currentQuestion = 0;
-    selectedAnswers = new Array(questions.length).fill(null);
+
+    selectedAnswers =
+        new Array(questions.length).fill(null);
 
     startScreen.classList.add("hidden");
+
     resultScreen.classList.add("hidden");
+
     quizScreen.classList.remove("hidden");
+
     homeInfo.classList.add("hidden");
+
+    if (suggestionsCard) {
+        suggestionsCard.classList.add("hidden");
+    }
 
     showQuestion();
 }
 
+
+// =========================================
+// SHOW QUESTION
+// =========================================
+
 function showQuestion() {
 
-    const current = questions[currentQuestion];
+    const current =
+        questions[currentQuestion];
 
     questionNumber.textContent =
         `Question ${currentQuestion + 1} of ${questions.length}`;
 
-    questionText.textContent = current.question;
+    questionText.textContent =
+        current.question;
 
     answersContainer.innerHTML = "";
 
+
     const progress =
-        ((currentQuestion + 1) / questions.length) * 100;
+        ((currentQuestion + 1) /
+        questions.length) * 100;
 
-    progressBar.style.width = `${progress}%`;
+    progressBar.style.width =
+        `${progress}%`;
 
-    current.answers.forEach((answer, index) => {
 
-        const button = document.createElement("button");
+    current.answers.forEach(
+        (answer, index) => {
 
-        button.className = "answer";
-        button.type = "button";
-        button.textContent = answer[0];
+            const button =
+                document.createElement("button");
 
-        // Restore previous answer
-        if (selectedAnswers[currentQuestion] === index) {
-            button.classList.add("selected");
+            button.className =
+                "answer";
+
+            button.type =
+                "button";
+
+            button.textContent =
+                answer[0];
+
+
+            // Restore previously selected answer
+
+            if (
+                selectedAnswers[currentQuestion] === index
+            ) {
+
+                button.classList.add(
+                    "selected"
+                );
+
+            }
+
+
+            button.addEventListener(
+                "click",
+                () => {
+                    selectAnswer(index);
+                }
+            );
+
+
+            answersContainer.appendChild(
+                button
+            );
+
         }
+    );
 
-        button.addEventListener("click", () => {
-            selectAnswer(index);
-        });
-
-        answersContainer.appendChild(button);
-    });
 
     updateNavigation();
 }
 
+
+// =========================================
+// SELECT ANSWER
+// =========================================
+
 function selectAnswer(answerIndex) {
 
-    selectedAnswers[currentQuestion] = answerIndex;
+    selectedAnswers[currentQuestion] =
+        answerIndex;
+
 
     const buttons =
-        answersContainer.querySelectorAll(".answer");
-
-    buttons.forEach((button, index) => {
-        button.classList.toggle(
-            "selected",
-            index === answerIndex
+        answersContainer.querySelectorAll(
+            ".answer"
         );
-    });
+
+
+    buttons.forEach(
+        (button, index) => {
+
+            button.classList.toggle(
+                "selected",
+                index === answerIndex
+            );
+
+        }
+    );
+
 
     updateNavigation();
 
-    const questionAtSelection = currentQuestion;
+
+    const questionAtSelection =
+        currentQuestion;
+
 
     setTimeout(() => {
 
         if (
             currentQuestion === questionAtSelection &&
-            selectedAnswers[questionAtSelection] === answerIndex &&
-            currentQuestion < questions.length - 1
+            selectedAnswers[questionAtSelection] ===
+                answerIndex &&
+            currentQuestion <
+                questions.length - 1
         ) {
+
             currentQuestion++;
+
             showQuestion();
+
         }
 
     }, 180);
 }
 
+
+// =========================================
+// NEXT
+// =========================================
+
 function goNext() {
 
-    if (selectedAnswers[currentQuestion] === null) {
+    if (
+        selectedAnswers[currentQuestion] === null
+    ) {
         return;
     }
 
-    if (currentQuestion === questions.length - 1) {
+
+    if (
+        currentQuestion ===
+        questions.length - 1
+    ) {
 
         if (
             selectedAnswers.every(
                 answer => answer !== null
             )
         ) {
+
             showResult();
+
         }
 
         return;
     }
 
+
     currentQuestion++;
+
     showQuestion();
 }
+
+
+// =========================================
+// BACK
+// =========================================
 
 function goBack() {
 
     if (currentQuestion > 0) {
+
         currentQuestion--;
+
         showQuestion();
+
     }
 }
+
+
+// =========================================
+// UPDATE NAVIGATION
+// =========================================
 
 function updateNavigation() {
 
@@ -453,7 +626,8 @@ function updateNavigation() {
         currentQuestion === 0;
 
     const isLast =
-        currentQuestion === questions.length - 1;
+        currentQuestion ===
+        questions.length - 1;
 
     const currentAnswered =
         selectedAnswers[currentQuestion] !== null;
@@ -463,14 +637,25 @@ function updateNavigation() {
             answer => answer !== null
         );
 
-    backButton.disabled = isFirst;
+
+    backButton.disabled =
+        isFirst;
+
 
     if (isLast) {
 
-        nextButton.classList.add("hidden");
-        submitButton.classList.remove("hidden");
+        nextButton.classList.add(
+            "hidden"
+        );
 
-        submitButton.disabled = !allAnswered;
+        submitButton.classList.remove(
+            "hidden"
+        );
+
+
+        submitButton.disabled =
+            !allAnswered;
+
 
         submitButton.textContent =
             allAnswered
@@ -479,17 +664,33 @@ function updateNavigation() {
 
     } else {
 
-        submitButton.classList.add("hidden");
-        nextButton.classList.remove("hidden");
+        submitButton.classList.add(
+            "hidden"
+        );
 
-        nextButton.textContent = "Next →";
-        nextButton.disabled = !currentAnswered;
+        nextButton.classList.remove(
+            "hidden"
+        );
+
+
+        nextButton.textContent =
+            "Next →";
+
+        nextButton.disabled =
+            !currentAnswered;
+
     }
 }
+
+
+// =========================================
+// CALCULATE SCORE
+// =========================================
 
 function calculateScore() {
 
     let score = 0;
+
 
     selectedAnswers.forEach(
         (answerIndex, questionIndex) => {
@@ -499,225 +700,477 @@ function calculateScore() {
                 score +=
                     questions[questionIndex]
                         .answers[answerIndex][1];
+
             }
+
         }
     );
+
 
     return score;
 }
 
+
+// =========================================
+// SHOW RESULT
+// =========================================
+
 function showResult() {
 
-    const score = calculateScore();
+    const correctAnswers =
+        calculateScore();
 
-    homeInfo.classList.remove("hidden");
-    quizScreen.classList.add("hidden");
-    resultScreen.classList.remove("hidden");
+    const totalQuestions =
+        questions.length;
 
-    document.getElementById("final-score").textContent = score;
+    const incorrectAnswers =
+        totalQuestions -
+        correctAnswers;
+
+
+    const percentage =
+        Math.round(
+            (correctAnswers /
+            totalQuestions) * 100
+        );
+
+
+    homeInfo.classList.remove(
+        "hidden"
+    );
+
+    quizScreen.classList.add(
+        "hidden"
+    );
+
+    resultScreen.classList.remove(
+        "hidden"
+    );
+
+
+    if (suggestionsCard) {
+
+        suggestionsCard.classList.remove(
+            "hidden"
+        );
+
+    }
+
+
+    // =====================================
+    // RESULT BREAKDOWN
+    // =====================================
+
+    document.getElementById(
+        "final-score"
+    ).textContent =
+        percentage;
+
+
+    document.getElementById(
+        "correct-count"
+    ).textContent =
+        correctAnswers;
+
+
+    document.getElementById(
+        "incorrect-count"
+    ).textContent =
+        incorrectAnswers;
+
+
+    document.getElementById(
+        "total-count"
+    ).textContent =
+        totalQuestions;
+
+
+    document.getElementById(
+        "accuracy-percent"
+    ).textContent =
+        `${percentage}%`;
+
+
+    // =====================================
+    // RESULT CATEGORY
+    // =====================================
 
     let title;
     let description;
     let knowledge;
     let icon;
 
-    if (score <= 6) {
 
-        title = "🐸 Monster Bait";
+    if (percentage <= 20) {
+
+        title =
+            "🐸 Monster Bait";
+
         description =
             "The monsters may know more about Love and Monsters than you do! Time for another watch.";
-        knowledge = "Casual Viewer";
-        icon = "🐸";
 
-    } else if (score <= 12) {
+        knowledge =
+            "Casual Viewer";
 
-        title = "🏚️ Bunker Survivor";
+        icon =
+            "🐸";
+
+
+    } else if (percentage <= 40) {
+
+        title =
+            "🏚️ Bunker Survivor";
+
         description =
             "You remember some of the movie, but quite a few details were lost somewhere along the journey.";
-        knowledge = "Casual Fan";
-        icon = "🏚️";
 
-    } else if (score <= 18) {
+        knowledge =
+            "Casual Fan";
 
-        title = "🎒 Monster Survivor";
+        icon =
+            "🏚️";
+
+
+    } else if (percentage <= 60) {
+
+        title =
+            "🎒 Monster Survivor";
+
         description =
             "Not bad! You remember the major characters, monsters and events, but some details escaped you.";
-        knowledge = "Good Fan";
-        icon = "🎒";
 
-    } else if (score <= 24) {
+        knowledge =
+            "Good Fan";
 
-        title = "🏹 Seasoned Survivor";
+        icon =
+            "🎒";
+
+
+    } else if (percentage <= 80) {
+
+        title =
+            "🏹 Seasoned Survivor";
+
         description =
             "Impressive! You know your monsters, colonies and characters pretty well.";
-        knowledge = "Dedicated Fan";
-        icon = "🏹";
 
-    } else if (score <= 29) {
+        knowledge =
+            "Dedicated Fan";
 
-        title = "🐕 Monster Expert";
+        icon =
+            "🏹";
+
+
+    } else if (percentage <= 96) {
+
+        title =
+            "🐕 Monster Expert";
+
         description =
             "Excellent! You remember most of the details that make Love and Monsters memorable.";
-        knowledge = "Expert Fan";
-        icon = "🐕";
+
+        knowledge =
+            "Expert Fan";
+
+        icon =
+            "🐕";
+
 
     } else {
 
-        title = "🧠 Love and Monsters Encyclopedia";
+        title =
+            "🧠 Love and Monsters Encyclopedia";
+
         description =
             "Perfect score! You remember practically every detail of Joel’s journey through the monster apocalypse.";
-        knowledge = "Ultimate Fan";
-        icon = "🧠";
+
+        knowledge =
+            "Ultimate Fan";
+
+        icon =
+            "🧠";
+
     }
 
-    document.getElementById("result-title").textContent = title;
-    document.getElementById("result-description").textContent = description;
-    document.getElementById("knowledge-level").textContent = knowledge;
-    document.getElementById("result-icon").textContent = icon;
 
-    progressBar.style.width = "100%";
+    document.getElementById(
+        "result-title"
+    ).textContent =
+        title;
+
+
+    document.getElementById(
+        "result-description"
+    ).textContent =
+        description;
+
+
+    document.getElementById(
+        "knowledge-level"
+    ).textContent =
+        knowledge;
+
+
+    document.getElementById(
+        "result-icon"
+    ).textContent =
+        icon;
+
+
+    progressBar.style.width =
+        "100%";
 }
+
+
+// =========================================
+// RESTART QUIZ
+// =========================================
 
 function restartQuiz() {
 
     currentQuestion = 0;
+
     selectedAnswers =
         new Array(questions.length).fill(null);
 
-    resultScreen.classList.add("hidden");
-    quizScreen.classList.add("hidden");
-    startScreen.classList.remove("hidden");
-    homeInfo.classList.remove("hidden");
 
-    progressBar.style.width = "0%";
+    resultScreen.classList.add(
+        "hidden"
+    );
+
+    quizScreen.classList.add(
+        "hidden"
+    );
+
+    startScreen.classList.remove(
+        "hidden"
+    );
+
+    homeInfo.classList.remove(
+        "hidden"
+    );
+
+
+    if (suggestionsCard) {
+
+        suggestionsCard.classList.add(
+            "hidden"
+        );
+
+    }
+
+
+    progressBar.style.width =
+        "0%";
 }
+
+
+// =========================================
+// SHARE RESULT
+// =========================================
 
 async function shareResult() {
 
     const title =
-        document.getElementById("result-title").textContent;
+        document.getElementById(
+            "result-title"
+        ).textContent;
+
 
     const knowledge =
-        document.getElementById("knowledge-level").textContent;
+        document.getElementById(
+            "knowledge-level"
+        ).textContent;
+
 
     const finalScore =
-        document.getElementById("final-score").textContent;
+        document.getElementById(
+            "final-score"
+        ).textContent;
+
+
+    const quizUrl =
+        "https://apocalypsequizzes.com/love-and-monsters-quiz/";
+
 
     const shareText =
-        `🐸 I scored ${finalScore}/30 on the Love and Monsters Quiz!\n\n` +
+        `🐸 I scored ${finalScore}% on the Love and Monsters Quiz!\n\n` +
         `${title}\n` +
         `Knowledge level: ${knowledge}\n\n` +
         `How well do YOU know Love and Monsters?`;
 
+
     const shareData = {
-        title: "Love and Monsters Quiz",
-        text: shareText,
-        url: "https://apocalypsequizzes.com/love-and-monsters-quiz/"
+
+        title:
+            "Love and Monsters Quiz",
+
+        text:
+            shareText,
+
+        url:
+            quizUrl
+
     };
+
 
     try {
 
         if (navigator.share) {
 
-            await navigator.share(shareData);
+            await navigator.share(
+                shareData
+            );
 
         } else {
 
             await navigator.clipboard.writeText(
                 shareText +
-                "\n\nhttps://apocalypsequizzes.com/love-and-monsters-quiz/"
+                "\n\n" +
+                quizUrl
             );
+
 
             alert(
                 "Your result has been copied! You can paste it anywhere."
             );
+
         }
 
     } catch (error) {
-        console.log("Sharing cancelled.");
+
+        console.log(
+            "Sharing cancelled."
+        );
+
     }
 }
 
-// ===============================
+
+// =========================================
 // GLOBAL SITE MENU
-// ===============================
+// =========================================
 
-const menuToggle = document.getElementById("menu-toggle");
-const siteMenu = document.getElementById("site-menu");
+const menuToggle =
+    document.getElementById(
+        "menu-toggle"
+    );
 
-if (menuToggle && siteMenu) {
+const siteMenu =
+    document.getElementById(
+        "site-menu"
+    );
+
+
+if (
+    menuToggle &&
+    siteMenu
+) {
+
 
     // OPEN / CLOSE WITH HAMBURGER
-    menuToggle.addEventListener("click", function (event) {
 
-        event.stopPropagation();
+    menuToggle.addEventListener(
+        "click",
+        function (event) {
 
-        const isOpen =
-            menuToggle.getAttribute("aria-expanded") === "true";
-
-        siteMenu.hidden = isOpen;
-
-        menuToggle.setAttribute(
-            "aria-expanded",
-            String(!isOpen)
-        );
-
-        menuToggle.setAttribute(
-            "aria-label",
-            isOpen
-                ? "Open navigation"
-                : "Close navigation"
-        );
-
-    });
+            event.stopPropagation();
 
 
-    // CLOSE WHEN CLICKING OUTSIDE
-    document.addEventListener("click", function (event) {
+            const isOpen =
+                menuToggle.getAttribute(
+                    "aria-expanded"
+                ) === "true";
 
-        if (
-            !siteMenu.hidden &&
-            !siteMenu.contains(event.target) &&
-            !menuToggle.contains(event.target)
-        ) {
 
-            siteMenu.hidden = true;
+            siteMenu.hidden =
+                isOpen;
+
 
             menuToggle.setAttribute(
                 "aria-expanded",
-                "false"
+                String(!isOpen)
             );
+
 
             menuToggle.setAttribute(
                 "aria-label",
-                "Open navigation"
+                isOpen
+                    ? "Open navigation"
+                    : "Close navigation"
             );
 
         }
+    );
 
-    });
+
+    // CLOSE WHEN CLICKING OUTSIDE
+
+    document.addEventListener(
+        "click",
+        function (event) {
+
+            if (
+                !siteMenu.hidden &&
+                !siteMenu.contains(
+                    event.target
+                ) &&
+                !menuToggle.contains(
+                    event.target
+                )
+            ) {
+
+                siteMenu.hidden =
+                    true;
 
 
-    // CLOSE AFTER CLICKING A MENU LINK
-    siteMenu.querySelectorAll("a").forEach(function (link) {
+                menuToggle.setAttribute(
+                    "aria-expanded",
+                    "false"
+                );
 
-        link.addEventListener("click", function () {
 
-            siteMenu.hidden = true;
+                menuToggle.setAttribute(
+                    "aria-label",
+                    "Open navigation"
+                );
 
-            menuToggle.setAttribute(
-                "aria-expanded",
-                "false"
-            );
+            }
 
-            menuToggle.setAttribute(
-                "aria-label",
-                "Open navigation"
-            );
+        }
+    );
 
-        });
 
-    });
+    // CLOSE AFTER CLICKING MENU LINK
+
+    siteMenu
+        .querySelectorAll("a")
+        .forEach(
+            function (link) {
+
+                link.addEventListener(
+                    "click",
+                    function () {
+
+                        siteMenu.hidden =
+                            true;
+
+
+                        menuToggle.setAttribute(
+                            "aria-expanded",
+                            "false"
+                        );
+
+
+                        menuToggle.setAttribute(
+                            "aria-label",
+                            "Open navigation"
+                        );
+
+                    }
+                );
+
+            }
+        );
 
 }
-
